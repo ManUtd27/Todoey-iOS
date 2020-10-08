@@ -13,14 +13,14 @@ class TodoListViewController: UITableViewController {
     var itemArray = ["Find Mike", "Buy Eggos", "This is the way"]
     
     let userDefault = UserDefaults.standard
-    
+    let todoListArrayKey = "TodoListArray"
     
     /// Handles logic after the view loads
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Get the items in the User Defaults database
-        if let items = userDefault.array(forKey: "TodoListArray") as? [String] {
+        if let items = userDefault.array(forKey: todoListArrayKey) as? [String] {
             itemArray = items
         }
       
@@ -88,7 +88,7 @@ class TodoListViewController: UITableViewController {
             // Append the texfield text to the end of the item array
             self.itemArray.append(textField.text!)
             // Save the updated item array to the User defaults
-            self.userDefault.set(self.itemArray, forKey: "TodoListArray")
+            self.userDefault.set(self.itemArray, forKey: self.todoListArrayKey)
             // Reload the table view data to update the UI
             self.tableView.reloadData()
         }
@@ -96,7 +96,7 @@ class TodoListViewController: UITableViewController {
         alert.addTextField { (alertTextField) in
             // set the placeholder for the texfield in the alert
             alertTextField.placeholder = "Create new item"
-            // This sets the Higher soccped textfield to the locally alert scopped textfield
+            // This sets the Higher scopped textfield to the locally alert scopped textfield
             textField = alertTextField
         }
         // Adds the created alert action to the instance of the alert
