@@ -12,9 +12,11 @@ class TodoListViewController: UITableViewController {
     
     var itemArray = ["Find Mike", "Buy Eggos", "This is the way"]
     
+    
+    /// Handles logic after the view loads
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+      
     }
     
     //MARK: - Tableview Datasource methods
@@ -36,8 +38,11 @@ class TodoListViewController: UITableViewController {
     ///   - indexPath: The index of the section or row where the data is inserted
     /// - Returns: The cell with data to populate the Table view
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // Create a cell constant from the reusable table view cell
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        // Set the cell text label with the array content at specified indexc
         cell.textLabel?.text = itemArray[indexPath.row]
+        // return the updated cell
         return cell
     }
     
@@ -51,6 +56,7 @@ class TodoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //         print(itemArray[indexPath.row])
         
+        // If the currently selected cell row has accessarry checkmark then set it to none otherwith set the checkmark
         if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
             tableView.cellForRow(at: indexPath)?.accessoryType = .none
         } else {
@@ -62,23 +68,31 @@ class TodoListViewController: UITableViewController {
     
     //MARK: - Add New Items
     
-    /// Displays an action sheet for the user to add a new item
+    /// Displays an alert for the user to add a new item
     /// - Parameter sender: The user action from the view
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        // Create a UI Text field to the higher function scope
         var textField = UITextField()
+        // Create an alert using the controller with a title, no message, and a preferred style
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+        // Create an alert action button to add to the alert. This is the alerts action button
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             // What will happen once the user clicks the add item button on our UIAlert
+            // Append the texfield text to the end of the item array
             self.itemArray.append(textField.text!)
+            // Reload the table view data to update the UI
             self.tableView.reloadData()
         }
-        
+        // Used to add a textfield in the alert which is scppod to inside the alert
         alert.addTextField { (alertTextField) in
+            // set the placeholder for the texfield in the alert
             alertTextField.placeholder = "Create new item"
+            // This sets the Higher soccped textfield to the locally alert scopped textfield
             textField = alertTextField
         }
-        
+        // Adds the created alert action to the instance of the alert
         alert.addAction(action)
+        // Presents the alert in the view with animation when the function is called
         present(alert, animated: true, completion: nil)
     }
 }
