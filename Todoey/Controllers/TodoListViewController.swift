@@ -7,19 +7,20 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
     let todoListArrayKey = "TodoListArray"
-    // Create a file path to the documents folder on the device
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Item.plist")
+    // Create current contex from the Current Apps shared resoures delegat and cast as our app delegate then get the persisted container
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     /// Handles logic after the view loads
     override func viewDidLoad() {
         super.viewDidLoad()
         // Load Items for persistence
-        loadItems()
+//        loadItems()
     }
     
     //MARK: - Tableview Datasource methods
@@ -84,12 +85,15 @@ class TodoListViewController: UITableViewController {
         // Create an alert action button to add to the alert. This is the alerts action button
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             // What will happen once the user clicks the add item button on our UIAlert
-            // Create a new Item object and Append the item to the end of the item array
-            let newItem = Item()
+            
+            // Create a new Item from current data model context and append to item array
+            let newItem = Item(context: self.context)
             newItem.title = textField.text!
             newItem.done = false
             self.itemArray.append(newItem)
-            // Save the updated item array to the NSCoder
+            
+            
+            // Save the updated item array to the DataModel
             self.saveItems()
             
         }
@@ -108,17 +112,12 @@ class TodoListViewController: UITableViewController {
     
     //MARK: - Model Manupulation Methods
     
-    /// Encode data and save to document file path
+    /// Save items array to the Core Data Item model
     func saveItems(){
-        // Get the encoder Object
-        let encoder = PropertyListEncoder()
         do {
-            // Try and encode the item array
-            let data =  try encoder.encode(itemArray)
-            // Try and write the encoded item array to the documents path
-            try data.write(to: dataFilePath!)
+            try self.context.save()
         } catch {
-            print("Error encodeing item array \(error)")
+            print("Error saving context \(error)")
         }
         // Reload the table view data to update the UI
         tableView.reloadData()
@@ -126,17 +125,17 @@ class TodoListViewController: UITableViewController {
     
     
     /// Load Items for the plist using decoder
-    func loadItems() {
-        if let data = try? Data(contentsOf: dataFilePath!) {
-            // Get Decoder Object
-            let decoder = PropertyListDecoder()
-            do {
-                itemArray = try decoder.decode([Item].self, from: data)
-            } catch {
-                print("Error decoding item array \(error) ")
-            }
-        }
-    }
+//    func loadItems() {
+//        if let data = try? Data(contentsOf: dataFilePath!) {
+//            // Get Decoder Object
+//            let decoder = PropertyListDecoder()
+//            do {
+//                itemArray = try decoder.decode([Item].self, from: data)
+//            } catch {
+//                print("Error decoding item array \(error) ")
+//            }
+//        }
+//    }
     
 }
 
