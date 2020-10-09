@@ -19,19 +19,19 @@ class TodoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-    
+        
         let newItem = Item()
-        newItem.title = "Find Mike"
+        newItem.title = "Learn iOS Development"
         newItem.done = false
         
         itemArray.append(newItem)
         
         
         // Get the items in the User Defaults database
-//        if let items = userDefault.array(forKey: todoListArrayKey) as? [Item] {
-//            itemArray = items
-//        }
-//
+        //        if let items = userDefault.array(forKey: todoListArrayKey) as? [Item] {
+        //            itemArray = items
+        //        }
+        //
     }
     
     //MARK: - Tableview Datasource methods
@@ -64,7 +64,7 @@ class TodoListViewController: UITableViewController {
         
         // If the currently selected cell row has accessarry checkmark then set it to none otherwith set the checkmark
         cell.accessoryType = item.done ? .checkmark : .none
-    
+        
         // return the updated cell
         return cell
     }
@@ -80,8 +80,7 @@ class TodoListViewController: UITableViewController {
         
         // Update to selected item done property to the oposite of what it was
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-        // Reload the table view to show updated changes
-        tableView.reloadData()
+        self.saveItems()
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -103,15 +102,8 @@ class TodoListViewController: UITableViewController {
             newItem.done = false
             self.itemArray.append(newItem)
             // Save the updated item array to the NSCoder
-            let encoder = PropertyListEncoder()
-            do {
-                let data =  try encoder.encode(self.itemArray)
-                try data.write(to: self.dataFilePath!)
-            } catch {
-                print("Error encodeing intem array \(error)")
-            }
-            // Reload the table view data to update the UI
-            self.tableView.reloadData()
+            self.saveItems()
+            
         }
         // Used to add a textfield in the alert which is scppod to inside the alert
         alert.addTextField { (alertTextField) in
@@ -125,5 +117,24 @@ class TodoListViewController: UITableViewController {
         // Presents the alert in the view with animation when the function is called
         present(alert, animated: true, completion: nil)
     }
+    
+    //MARK: - Model Manupulation Methods
+    
+    /// Encode data and save to document file path
+    func saveItems(){
+        // Get the encoder Object
+        let encoder = PropertyListEncoder()
+        do {
+            // Try and encode the item array
+            let data =  try encoder.encode(itemArray)
+            // Try and write the encoded item array to the documents path
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("Error encodeing intem array \(error)")
+        }
+        // Reload the table view data to update the UI
+        tableView.reloadData()
+    }
+    
 }
 
