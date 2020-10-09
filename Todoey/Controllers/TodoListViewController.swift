@@ -18,20 +18,8 @@ class TodoListViewController: UITableViewController {
     /// Handles logic after the view loads
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        let newItem = Item()
-        newItem.title = "Learn iOS Development"
-        newItem.done = false
-        
-        itemArray.append(newItem)
-        
-        
-        // Get the items in the User Defaults database
-        //        if let items = userDefault.array(forKey: todoListArrayKey) as? [Item] {
-        //            itemArray = items
-        //        }
-        //
+        // Load Items for persistence
+        loadItems()
     }
     
     //MARK: - Tableview Datasource methods
@@ -130,10 +118,24 @@ class TodoListViewController: UITableViewController {
             // Try and write the encoded item array to the documents path
             try data.write(to: dataFilePath!)
         } catch {
-            print("Error encodeing intem array \(error)")
+            print("Error encodeing item array \(error)")
         }
         // Reload the table view data to update the UI
         tableView.reloadData()
+    }
+    
+    
+    /// Load Items for the plist using decoder
+    func loadItems() {
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            // Get Decoder Object
+            let decoder = PropertyListDecoder()
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error decoding item array \(error) ")
+            }
+        }
     }
     
 }
