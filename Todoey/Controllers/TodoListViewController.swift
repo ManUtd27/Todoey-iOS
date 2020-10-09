@@ -73,6 +73,12 @@ class TodoListViewController: UITableViewController {
         
         // Update to selected item done property to the oposite of what it was
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        
+        // Test remove
+//        context.delete(itemArray[indexPath.row])
+//        itemArray.remove(at: indexPath.row)
+        
+        
         self.saveItems()
         tableView.deselectRow(at: indexPath, animated: true)
     }
