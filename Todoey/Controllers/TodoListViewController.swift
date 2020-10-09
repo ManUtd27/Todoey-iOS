@@ -11,15 +11,15 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
-    
-    let userDefault = UserDefaults.standard
     let todoListArrayKey = "TodoListArray"
+    // Create a file path to the documents folder on the device
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Item.plist")
     
     /// Handles logic after the view loads
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+    
         let newItem = Item()
         newItem.title = "Find Mike"
         newItem.done = false
@@ -28,10 +28,10 @@ class TodoListViewController: UITableViewController {
         
         
         // Get the items in the User Defaults database
-//        if let items = userDefault.array(forKey: todoListArrayKey) as? [String] {
+//        if let items = userDefault.array(forKey: todoListArrayKey) as? [Item] {
 //            itemArray = items
 //        }
-      
+//
     }
     
     //MARK: - Tableview Datasource methods
@@ -102,8 +102,14 @@ class TodoListViewController: UITableViewController {
             newItem.title = textField.text!
             newItem.done = false
             self.itemArray.append(newItem)
-            // Save the updated item array to the User defaults
-//            self.userDefault.set(self.itemArray, forKey: self.todoListArrayKey)
+            // Save the updated item array to the NSCoder
+            let encoder = PropertyListEncoder()
+            do {
+                let data =  try encoder.encode(self.itemArray)
+                try data.write(to: self.dataFilePath!)
+            } catch {
+                print("Error encodeing intem array \(error)")
+            }
             // Reload the table view data to update the UI
             self.tableView.reloadData()
         }
