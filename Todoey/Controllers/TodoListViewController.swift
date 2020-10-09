@@ -19,8 +19,12 @@ class TodoListViewController: UITableViewController {
     /// Handles logic after the view loads
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+//        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        
+        
         // Load Items for persistence
-//        loadItems()
+        loadItems()
     }
     
     //MARK: - Tableview Datasource methods
@@ -124,18 +128,15 @@ class TodoListViewController: UITableViewController {
     }
     
     
-    /// Load Items for the plist using decoder
-//    func loadItems() {
-//        if let data = try? Data(contentsOf: dataFilePath!) {
-//            // Get Decoder Object
-//            let decoder = PropertyListDecoder()
-//            do {
-//                itemArray = try decoder.decode([Item].self, from: data)
-//            } catch {
-//                print("Error decoding item array \(error) ")
-//            }
-//        }
-//    }
+    /// Load Items in the Coredate persisted container
+    func loadItems() {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        do {
+            itemArray =  try context.fetch(request)
+        } catch {
+            print("Error Fetching items \(error)")
+        }
+    }
     
 }
 
