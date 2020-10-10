@@ -177,8 +177,6 @@ extension TodoListViewController: UISearchBarDelegate {
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
             }
-        } else {
-            searchBarSearchButtonClicked(searchBar)
         }
     }
 }
