@@ -12,19 +12,19 @@ import CoreData
 class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
+    var selectedCategory : Category? {
+        didSet{
+            // Load Items for persistence
+            loadItems()
+        }
+    }
     // Create current contex from the Current Apps shared resoures delegat and cast as our app delegate then get the persisted container
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     /// Handles logic after the view loads
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        
-//        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        
-        
-        // Load Items for persistence
-        loadItems()
+        //        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
     }
     
     //MARK: - Tableview Datasource methods
@@ -75,8 +75,8 @@ class TodoListViewController: UITableViewController {
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
         // Test remove
-//        context.delete(itemArray[indexPath.row])
-//        itemArray.remove(at: indexPath.row)
+        //        context.delete(itemArray[indexPath.row])
+        //        itemArray.remove(at: indexPath.row)
         
         
         self.saveItems()
@@ -100,6 +100,7 @@ class TodoListViewController: UITableViewController {
             let newItem = Item(context: self.context)
             newItem.title = textField.text!
             newItem.done = false
+            newItem.parentCategory = self.selectedCategory
             self.itemArray.append(newItem)
             
             
@@ -135,7 +136,17 @@ class TodoListViewController: UITableViewController {
     
     
     /// Load Items in the Coredate persisted container
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest() ) {
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil ) {
+        
+        // Create filter predicate to only selects the items that have parentCategory.name that matches the selected category name
+        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+        // If there is a search Item predicate create a compound predicate for the request otherwise continue with category predicate
+        if let additionalPredicate = predicate {
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
+        } else {
+            request.predicate = categoryPredicate
+        }
+        
         do {
             itemArray =  try context.fetch(request)
         } catch {
@@ -156,13 +167,13 @@ extension TodoListViewController: UISearchBarDelegate {
         let request: NSFetchRequest<Item> = Item.fetchRequest()
         
         // Tag on a query to the request to specify what we want back from the database and Add our structured query to the request
-        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
         
         
         // Sort date results from the data with a sort descriptor and  Add the sort descriptor to the request
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        
-        loadItems(with: request)
+        // load items with the request and filter predicate
+        loadItems(with: request, predicate: predicate)
     }
     
     

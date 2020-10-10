@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 class CategoryTableViewController: UITableViewController {
-
+    
     var categoryArray = [Category]()
     // Create current contex from the Current Apps shared resoures delegat and cast as our app delegate then get the persisted container
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -24,10 +24,10 @@ class CategoryTableViewController: UITableViewController {
         loadCategories()
     }
     
-  
+    
     
     // MARK: - Table view data source methods
-
+    
     /// Used to get the numbers of cell rows needed for the table view
     /// - Parameters:
     ///   - tableView: The current table view
@@ -56,7 +56,7 @@ class CategoryTableViewController: UITableViewController {
         // return the updated cell
         return cell
     }
-
+    
     
     
     //MARK: - Data Manipulation Methods
@@ -128,6 +128,23 @@ class CategoryTableViewController: UITableViewController {
     ///   - tableView: The current table view
     ///   - indexPath: the index of the section or row that was selected
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "goToItems", sender: self)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    
+    /// Prepares the View Cotroller before the Segue begins
+    /// - Parameters:
+    ///   - segue: the current segue
+    ///   - sender: The UI sender performing the segque
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the View Controller that is the destination from the segue
+        let destinationVC = segue.destination as! TodoListViewController
+        
+        // Grap the category that corresponds to the selected cell
+        if let indexPath = tableView.indexPathForSelectedRow {
+            // Set the destinationVS category to the selected category
+            destinationVC.selectedCategory = categoryArray[indexPath.row]
+        }
     }
 }
