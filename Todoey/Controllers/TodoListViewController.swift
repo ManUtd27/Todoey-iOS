@@ -12,7 +12,6 @@ import CoreData
 class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
-    let todoListArrayKey = "TodoListArray"
     // Create current contex from the Current Apps shared resoures delegat and cast as our app delegate then get the persisted container
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
