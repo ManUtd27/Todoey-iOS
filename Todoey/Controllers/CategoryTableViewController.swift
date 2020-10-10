@@ -62,18 +62,19 @@ class CategoryTableViewController: UITableViewController {
     //MARK: - Data Manipulation Methods
     
     /// Save Category array to the Core Data Item model
-    func saveCategorys(){
+    func saveCategories(){
         do {
             try self.context.save()
         } catch {
-            print("Error saving context \(error)")
+            print("Error saving category \(error)")
         }
         // Reload the table view data to update the UI
         tableView.reloadData()
     }
     
     /// Load Categories in the Coredate persisted container
-    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest() ) {
+    func loadCategories() {
+        let request : NSFetchRequest<Category> = Category.fetchRequest()
         do {
             categoryArray =  try context.fetch(request)
         } catch {
@@ -103,13 +104,13 @@ class CategoryTableViewController: UITableViewController {
             
             
             // Save the updated Category array to the DataModel
-            self.saveCategorys()
+            self.saveCategories()
             
         }
         // Used to add a textfield in the alert which is scppod to inside the alert
         alert.addTextField { (alertTextField) in
             // set the placeholder for the texfield in the alert
-            alertTextField.placeholder = "Create new Category"
+            alertTextField.placeholder = "Add a new category"
             // This sets the Higher scopped textfield to the locally alert scopped textfield
             textField = alertTextField
         }
