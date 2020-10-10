@@ -150,7 +150,6 @@ class TodoListViewController: UITableViewController {
 //MARK: - Search Bar  Methods
 extension TodoListViewController: UISearchBarDelegate {
     
-    
     /// Tells us when the search button is pressed in the UI
     /// - Parameter searchBar: The UI element sending the context
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -165,6 +164,22 @@ extension TodoListViewController: UISearchBarDelegate {
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
         loadItems(with: request)
+    }
+    
+    
+    /// Handles logic for everytime the text is changed in the search field
+    /// - Parameters:
+    ///   - searchBar: The UI Search bat
+    ///   - searchText: the text in the search bar that is changing
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        } else {
+            searchBarSearchButtonClicked(searchBar)
+        }
     }
 }
 
