@@ -19,6 +19,7 @@ class TodoListViewController: UITableViewController {
     /// Handles logic after the view loads
     override func viewDidLoad() {
         super.viewDidLoad()
+
         
 //        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
@@ -135,14 +136,35 @@ class TodoListViewController: UITableViewController {
     
     
     /// Load Items in the Coredate persisted container
-    func loadItems() {
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest() ) {
         do {
             itemArray =  try context.fetch(request)
         } catch {
             print("Error Fetching items \(error)")
         }
+        tableView.reloadData()
     }
     
+}
+
+//MARK: - Search Bar  Methods
+extension TodoListViewController: UISearchBarDelegate {
+    
+    
+    /// Tells us when the search button is pressed in the UI
+    /// - Parameter searchBar: The UI element sending the context
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        // get a request for querying the database
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        
+        // Tag on a query to the request to specify what we want back from the database and Add our structured query to the request
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        
+        
+        // Sort date results from the data with a sort descriptor and  Add the sort descriptor to the request
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        
+        loadItems(with: request)
+    }
 }
 
