@@ -155,6 +155,14 @@ class CategoryTableViewController: UITableViewController {
 
 //MARK: - Handles the Swipe Cell delegate methods
 extension CategoryTableViewController: SwipeTableViewCellDelegate {
+    
+    
+    /// Updates the table view to have a swipeable action to delete categories
+    /// - Parameters:
+    ///   - tableView: The current table view
+    ///   - indexPath: the index path of the cell to delete
+    ///   - orientation: The orientaion of the current swipe
+    /// - Returns: Returns the complete delete swipe action to the table view
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         guard orientation == .right else { return nil }
         
@@ -162,15 +170,23 @@ extension CategoryTableViewController: SwipeTableViewCellDelegate {
             // handle action by updating model with deletion
             self.context.delete(self.categoryArray[indexPath.row])
             self.categoryArray.remove(at: indexPath.row)
-            // Save the updated Category array to the DataModel
-            self.saveCategories()
-            
         }
-        
         // customize the action appearance
         deleteAction.image = UIImage(named: "delete-icon")
-        
         return [deleteAction]
+    }
+    
+    
+    /// Customize the look and feel of the swipe action
+    /// - Parameters:
+    ///   - collectionView: The current view thats being swiped
+    ///   - indexPath: the index path of the swiped cell
+    ///   - orientation: the orientatio of the swipped used for the action
+    /// - Returns: Return the custom action back
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+        var options = SwipeOptions()
+        options.expansionStyle = .destructive
+        return options
     }
     
 }
