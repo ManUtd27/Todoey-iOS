@@ -8,6 +8,8 @@
 
 import UIKit
 import CoreData
+import SwipeCellKit
+
 
 class CategoryTableViewController: UITableViewController {
     
@@ -22,6 +24,7 @@ class CategoryTableViewController: UITableViewController {
         
         // Load Items for persistence
         loadCategories()
+        tableView.rowHeight = 80.0
     }
     
     
@@ -45,7 +48,10 @@ class CategoryTableViewController: UITableViewController {
     /// - Returns: The cell with data to populate the Table view
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // Create a cell constant from the reusable table view cell
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath) as! SwipeTableViewCell
+        
+        // set the cell delegate to self
+        cell.delegate = self
         
         // Get a reference to the current category
         let category = categoryArray[indexPath.row]
@@ -56,8 +62,6 @@ class CategoryTableViewController: UITableViewController {
         // return the updated cell
         return cell
     }
-    
-    
     
     //MARK: - Data Manipulation Methods
     
@@ -147,4 +151,26 @@ class CategoryTableViewController: UITableViewController {
             destinationVC.selectedCategory = categoryArray[indexPath.row]
         }
     }
+}
+
+//MARK: - Handles the Swipe Cell delegate methods
+extension CategoryTableViewController: SwipeTableViewCellDelegate {
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+        
+        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+            // handle action by updating model with deletion
+            self.context.delete(self.categoryArray[indexPath.row])
+            self.categoryArray.remove(at: indexPath.row)
+            // Save the updated Category array to the DataModel
+            self.saveCategories()
+            
+        }
+        
+        // customize the action appearance
+        deleteAction.image = UIImage(named: "delete-icon")
+        
+        return [deleteAction]
+    }
+    
 }
