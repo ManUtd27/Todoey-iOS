@@ -8,10 +8,10 @@
 
 import UIKit
 import CoreData
-import SwipeCellKit
 
 
-class CategoryTableViewController: UITableViewController {
+
+class CategoryTableViewController: SwipeTableViewController {
     
     var categoryArray = [Category]()
     // Create current contex from the Current Apps shared resoures delegat and cast as our app delegate then get the persisted container
@@ -47,17 +47,15 @@ class CategoryTableViewController: UITableViewController {
     ///   - indexPath: The index of the section or row where the data is inserted
     /// - Returns: The cell with data to populate the Table view
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // Create a cell constant from the reusable table view cell
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath) as! SwipeTableViewCell
         
-        // set the cell delegate to self
-        cell.delegate = self
+        // Tap into the super class cell definitaion and update it
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         // Get a reference to the current category
         let category = categoryArray[indexPath.row]
         
         // Set the cell text label with the array content at specified index
-        cell.textLabel?.text = category.name
+        cell.textLabel?.text = category.name ?? "No Categories Added Yet"
         
         // return the updated cell
         return cell
@@ -87,6 +85,17 @@ class CategoryTableViewController: UITableViewController {
         tableView.reloadData()
     }
     
+    //MARK: - Delete Data from swipe
+    
+    
+    /// Overide implementation of the supper class method
+    /// - Parameter indexPath: The current index path of the selected cell
+    override func updateModel(at indexPath: IndexPath) {
+        // Use the current context to delete from the persistence container
+        self.context.delete(self.categoryArray[indexPath.row])
+        // Update the category array
+        self.categoryArray.remove(at: indexPath.row)
+    }
     
     //MARK: - Add New Categories
     
@@ -153,40 +162,4 @@ class CategoryTableViewController: UITableViewController {
     }
 }
 
-//MARK: - Handles the Swipe Cell delegate methods
-extension CategoryTableViewController: SwipeTableViewCellDelegate {
-    
-    
-    /// Updates the table view to have a swipeable action to delete categories
-    /// - Parameters:
-    ///   - tableView: The current table view
-    ///   - indexPath: the index path of the cell to delete
-    ///   - orientation: The orientaion of the current swipe
-    /// - Returns: Returns the complete delete swipe action to the table view
-    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-        guard orientation == .right else { return nil }
-        
-        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
-            // handle action by updating model with deletion
-            self.context.delete(self.categoryArray[indexPath.row])
-            self.categoryArray.remove(at: indexPath.row)
-        }
-        // customize the action appearance
-        deleteAction.image = UIImage(named: "delete-icon")
-        return [deleteAction]
-    }
-    
-    
-    /// Customize the look and feel of the swipe action
-    /// - Parameters:
-    ///   - collectionView: The current view thats being swiped
-    ///   - indexPath: the index path of the swiped cell
-    ///   - orientation: the orientatio of the swipped used for the action
-    /// - Returns: Return the custom action back
-    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
-        var options = SwipeOptions()
-        options.expansionStyle = .destructive
-        return options
-    }
-    
-}
+
