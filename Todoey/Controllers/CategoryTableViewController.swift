@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import ChameleonFramework
 
 
 
@@ -24,6 +25,9 @@ class CategoryTableViewController: SwipeTableViewController {
         
         // Load Items for persistence
         loadCategories()
+        
+        // Set the seperator style for the Table View cells
+        tableView.separatorStyle = .none
     }
     
     
@@ -55,6 +59,9 @@ class CategoryTableViewController: SwipeTableViewController {
         
         // Set the cell text label with the array content at specified index
         cell.textLabel?.text = category.name ?? "No Categories Added Yet"
+        
+        // Change the Cells background color to a random flat color that was persisted
+        cell.backgroundColor = UIColor(hexString: category.backgroundColor ?? "16363A")
         
         // return the updated cell
         return cell
@@ -112,6 +119,10 @@ class CategoryTableViewController: SwipeTableViewController {
             // Create a new Category from current data model context and append to category array
             let newCategory = Category(context: self.context)
             newCategory.name = textField.text!
+            
+            // Add a random flat color to Cells background
+            newCategory.backgroundColor = UIColor.randomFlat().hexValue()
+            
             self.categoryArray.append(newCategory)
             
             
