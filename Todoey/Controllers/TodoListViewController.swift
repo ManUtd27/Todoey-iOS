@@ -12,6 +12,7 @@ import ChameleonFramework
 
 class TodoListViewController: SwipeTableViewController {
     
+    @IBOutlet weak var searchBar: UISearchBar!
     var itemArray = [Item]()
     var selectedCategory : Category? {
         didSet{
@@ -25,17 +26,26 @@ class TodoListViewController: SwipeTableViewController {
     /// Handles logic after the view loads
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        
     }
     
     // Handles logic just before the user see anything on the screen
     override func viewWillAppear(_ animated: Bool) {
+        // If the Parent has a selected category color then perfom logic
         if let color = selectedCategory?.backgroundColor {
             title = selectedCategory!.name
+            // If the Navbar is available the set the const with a reference
             guard let navBar = navigationController?.navigationBar  else {
                 fatalError("Navigation controller does not exist.")
             }
-            navBar.backgroundColor = UIColor(hexString: color )
+            // If the UIcolor return a correct color then perform logic
+            if let navBarColor = UIColor(hexString: color) {
+                // set some UI stuff with the color
+                navBar.backgroundColor = navBarColor
+                navBar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
+                navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
+                searchBar.barTintColor = navBarColor
+            }
         }
     }
     
@@ -73,7 +83,7 @@ class TodoListViewController: SwipeTableViewController {
         
         // Change the cells back ground color to a gradient effect based on the parent category cell color
         if let parentBackgroundColor = item.parentCategory?.backgroundColor {
-           let itemBackgroundColor = UIColor(hexString: parentBackgroundColor)?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(itemArray.count))
+            let itemBackgroundColor = UIColor(hexString: parentBackgroundColor)?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(itemArray.count))
             cell.backgroundColor = itemBackgroundColor
             cell.textLabel?.textColor = ContrastColorOf(itemBackgroundColor!, returnFlat: true)
         }
