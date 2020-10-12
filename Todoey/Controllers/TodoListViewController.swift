@@ -31,6 +31,7 @@ class TodoListViewController: SwipeTableViewController {
     // Handles logic just before the user see anything on the screen
     override func viewWillAppear(_ animated: Bool) {
         if let color = selectedCategory?.backgroundColor {
+            title = selectedCategory!.name
             guard let navBar = navigationController?.navigationBar  else {
                 fatalError("Navigation controller does not exist.")
             }
