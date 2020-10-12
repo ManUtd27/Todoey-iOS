@@ -9,13 +9,14 @@
 import UIKit
 import CoreData
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController {
     
     var itemArray = [Item]()
     var selectedCategory : Category? {
         didSet{
             // Load Items for persistence
             loadItems()
+            tableView.rowHeight = 80.0
         }
     }
     // Create current contex from the Current Apps shared resoures delegat and cast as our app delegate then get the persisted container
@@ -46,14 +47,15 @@ class TodoListViewController: UITableViewController {
     ///   - indexPath: The index of the section or row where the data is inserted
     /// - Returns: The cell with data to populate the Table view
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // Create a cell constant from the reusable table view cell
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        
+        // Tap into the super class cell definitaion and update it
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         // Get a reference to the current item
         let item = itemArray[indexPath.row]
         
         // Set the cell text label with the array content at specified indexc
-        cell.textLabel?.text = item.title
+        cell.textLabel?.text = item.title ?? "No Items Added Yet"
         
         // If the currently selected cell row has accessarry checkmark then set it to none otherwith set the checkmark
         cell.accessoryType = item.done ? .checkmark : .none
@@ -73,11 +75,6 @@ class TodoListViewController: UITableViewController {
         
         // Update to selected item done property to the oposite of what it was
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-        
-        // Test remove
-        //        context.delete(itemArray[indexPath.row])
-        //        itemArray.remove(at: indexPath.row)
-        
         
         self.saveItems()
         tableView.deselectRow(at: indexPath, animated: true)
@@ -154,6 +151,20 @@ class TodoListViewController: UITableViewController {
         }
         tableView.reloadData()
     }
+    
+    //MARK: - Delete Data from swipe
+    
+    
+    /// Overide implementation of the supper class method
+    /// - Parameter indexPath: The current index path of the selected cell
+    override func updateModel(at indexPath: IndexPath) {
+        // Use the current context to delete from the persistence container
+        context.delete(itemArray[indexPath.row])
+        // Update the Item array
+        itemArray.remove(at: indexPath.row)
+    }
+    
+    
     
 }
 
