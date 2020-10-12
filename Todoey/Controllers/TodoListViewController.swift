@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import ChameleonFramework
 
 class TodoListViewController: SwipeTableViewController {
     
@@ -58,6 +59,11 @@ class TodoListViewController: SwipeTableViewController {
         
         // If the currently selected cell row has accessarry checkmark then set it to none otherwith set the checkmark
         cell.accessoryType = item.done ? .checkmark : .none
+        
+        // Change the cells back ground color to a gradient effect based on the parent category cell color
+        if let backgroundColor = item.parentCategory?.backgroundColor {
+            cell.backgroundColor = UIColor(hexString: backgroundColor)?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(itemArray.count))
+        }
         
         // return the updated cell
         return cell

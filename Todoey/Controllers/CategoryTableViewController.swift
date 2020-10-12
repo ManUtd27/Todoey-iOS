@@ -25,9 +25,6 @@ class CategoryTableViewController: SwipeTableViewController {
         
         // Load Items for persistence
         loadCategories()
-        
-        // Set the seperator style for the Table View cells
-        tableView.separatorStyle = .none
     }
     
     
