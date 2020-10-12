@@ -61,8 +61,10 @@ class TodoListViewController: SwipeTableViewController {
         cell.accessoryType = item.done ? .checkmark : .none
         
         // Change the cells back ground color to a gradient effect based on the parent category cell color
-        if let backgroundColor = item.parentCategory?.backgroundColor {
-            cell.backgroundColor = UIColor(hexString: backgroundColor)?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(itemArray.count))
+        if let parentBackgroundColor = item.parentCategory?.backgroundColor {
+           let itemBackgroundColor = UIColor(hexString: parentBackgroundColor)?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(itemArray.count))
+            cell.backgroundColor = itemBackgroundColor
+            cell.textLabel?.textColor = ContrastColorOf(itemBackgroundColor!, returnFlat: true)
         }
         
         // return the updated cell
