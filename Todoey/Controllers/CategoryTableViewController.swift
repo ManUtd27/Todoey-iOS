@@ -24,7 +24,6 @@ class CategoryTableViewController: SwipeTableViewController {
         
         // Load Items for persistence
         loadCategories()
-        tableView.rowHeight = 80.0
     }
     
     

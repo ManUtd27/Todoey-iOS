@@ -16,7 +16,6 @@ class TodoListViewController: SwipeTableViewController {
         didSet{
             // Load Items for persistence
             loadItems()
-            tableView.rowHeight = 80.0
         }
     }
     // Create current contex from the Current Apps shared resoures delegat and cast as our app delegate then get the persisted container
