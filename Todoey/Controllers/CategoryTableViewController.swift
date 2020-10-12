@@ -29,10 +29,16 @@ class CategoryTableViewController: SwipeTableViewController {
     
     // Handles logic just before the user see anything on the screen
     override func viewWillAppear(_ animated: Bool) {
+        // If the navbar is available
         guard let navBar = navigationController?.navigationBar  else {
             fatalError("Navigation controller does not exist.")
         }
-        navBar.backgroundColor = .none
+        // If you have a correct UIColor for the navbarbackground
+        if let navBarColor =  UIColor(hexString: "373a40") {
+            // Use the color to set the background of the navbar and contrast the Large Text color
+            navBar.backgroundColor = navBarColor
+            navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
+        }
     }
     
     
@@ -64,8 +70,15 @@ class CategoryTableViewController: SwipeTableViewController {
         // Set the cell text label with the array content at specified index
         cell.textLabel?.text = category.name ?? "No Categories Added Yet"
         
+        // If UIcolor  returns a correct color set backgrounds and contrast colors
+        guard let categoryColor =  UIColor(hexString: category.backgroundColor ?? "16363A") else {
+            fatalError()
+        }
         // Change the Cells background color to a random flat color that was persisted
-        cell.backgroundColor = UIColor(hexString: category.backgroundColor ?? "16363A")
+        cell.backgroundColor = categoryColor
+        
+        // Set the text color for the cells with a contrast
+        cell.textLabel?.textColor = ContrastColorOf(categoryColor, returnFlat: true)
         
         // return the updated cell
         return cell
