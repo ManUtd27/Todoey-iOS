@@ -27,6 +27,13 @@ class CategoryTableViewController: SwipeTableViewController {
         loadCategories()
     }
     
+    // Handles logic just before the user see anything on the screen
+    override func viewWillAppear(_ animated: Bool) {
+        guard let navBar = navigationController?.navigationBar  else {
+            fatalError("Navigation controller does not exist.")
+        }
+        navBar.backgroundColor = .none
+    }
     
     
     // MARK: - Table view data source methods
